@@ -18,12 +18,17 @@ def pass_newstring_to_nokogiri
   @doc = Nokogiri::HTML(File.open(@html_file))
 end
 
-def parse_string_object_for_comment
-   @raw_comments = @doc.search('span.comment').map { |comment| comment.inner_text}
-end
 
 def parse_string_object_for_post_title
    @raw_title = @doc.search('title').map { |title| title.inner_text}
+end
+
+def parse_string_object_for_id
+   @raw_ids = @doc.search('.comhead > a:first-child').map { |id| id.inner_text}
+end
+
+def parse_string_object_for_comments
+   @raw_comments = @doc.search('span.comment').map { |comment| comment.inner_text}
 end
 
 
@@ -43,15 +48,22 @@ take_url_from_arvg_to_string_io
 pass_newstring_to_nokogiri
 
 parse_string_object_for_post_title
-parse_string_object_for_comment
-
+parse_string_object_for_id
+parse_string_object_for_comments
 
 @comment_count = @raw_comments.length
-puts @raw_title
+# puts @raw_title
 @title = @raw_title[0]
-puts @raw_comments
-puts @comment_count
+# puts @raw_comments
+# puts @comment_count
 
 puts "Title: " + "#{@title},"  + " has #{@comment_count} comments."
 
-puts @doc
+
+post = Post.new(@raw_title, @command_line_input)
+
+puts post.url
+
+# puts @raw_ids
+
+# puts @doc
