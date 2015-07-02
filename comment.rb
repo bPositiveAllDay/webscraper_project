@@ -1,12 +1,18 @@
 class Comment
+attr_accessor :contents
 
 
- def initialize
-   @comment_length = comment_length
- end
+  def initialize(contents)
+    @contents = contents
+  end
 
+  
 
- def add_comment
- end
+  def add_to_comment
 
+  end
+
+  def self.comment_bank
+    @@comment_bank
+  end
 end
