@@ -5,98 +5,78 @@ require_relative 'post'
 require_relative 'comment'
 
 
-# class Scraper
-# 	attr_accessor :comment_count
+ def get_command_line_input
+   @command_line_input = ARGV[0]
+ end
 
-  # def initialize
-  # end
+def take_url_from_arvg_to_string_io
+   @html_file = open(@command_line_input)
+ end
 
-  def get_command_line_input
-    @command_line_input = ARGV[0]
-  end
+ def pass_newstring_to_nokogiri
+   @doc = Nokogiri::HTML(File.open(@html_file))
+ end
 
-  def take_url_from_arvg_to_string_io
-    @html_file = open(@command_line_input)
-  end
+ # def parse_string_object_for_comments #finds comments w/o user id
+ #   @comments = @doc.search('span.comment').map {|comment| comment.inner_text}
+ # end
 
-  def pass_newstring_to_nokogiri
-    @doc = Nokogiri::HTML(File.open(@html_file))
-  end
+ def parse_string_object_for_title 
+   @post_title = @doc.search('title').map {|title| title.inner_text} 
+ end
 
+ def parse_string_object_for_id #can be used to parse id seperately
+   @ids = @doc.search('.comhead a:first-child').map {|id| id.inner_text}
+ end
 
-  def parse_string_object_for_post_title
-    @raw_title = @doc.search('title').map { |title| title.inner_text}
-  end
+ def parse_string_object_for_score
+   @post_points = @doc.search('span.score').map {|score| score.inner_text}
+ end
 
-# def parse_string_object_for_id
-#    @raw_ids = @doc.search('.comhead > a:first-child').map { |id| id.inner_text}
-# end
+ def identify_comments
+ end
 
-  def parse_string_object_for_comments
-    @raw_comments = @doc.search('.default').map { |comment| comment.inner_text}
-  end
+ def make_comment
+ end
 
-  def parse_string_object_for_points
-    @raw_points = @doc.search('span.score').map { |score| score.inner_text}
-  end
-
-
-  def identify_comments
-
-  end
+ def parse_string_object_for_comments_plus_id
+   @comments = @doc.search('.default').map {|comment| comment.inner_text}
+ end
 
 
-  def make_comment
-
-  end
-
-
- #  def scrape
- #  	get_command_line_input
- #    take_url_from_arvg_to_string_io
- #    pass_newstring_to_nokogiri
- #    parse_string_object_for_post_title
-	# parse_string_object_for_points
-	# parse_string_object_for_comments
-	
-	# @title = @raw_title[0]
- #    @url = @command_line_input.to_s
- #    @points = @raw_points[0]
- #    @comment_count = @raw_comments.length
- #    post = Post.new(@title, @url, @points)
+ 
+   get_command_line_input
+   take_url_from_arvg_to_string_io
+   pass_newstring_to_nokogiri
+   parse_string_object_for_title
+   parse_string_object_for_score
+   # parse_string_object_for_comments
+   parse_string_object_for_id
+   parse_string_object_for_comments_plus_id
 
 
- #  end
+   
+   @comment_count = @comments.length
+   puts "Title : #{@post_title[0]}"
+   puts "Comments: #{@comment_count} comments"
+   puts "#{@score}"
 
-# end
+   post = Post.new(@post_title, @command_line_input, @post_points)
 
-  	get_command_line_input
-    take_url_from_arvg_to_string_io
-    pass_newstring_to_nokogiri
-    parse_string_object_for_post_title
-	parse_string_object_for_points
-	parse_string_object_for_comments
-	
-	@title = @raw_title[0]
-    @url = @command_line_input.to_s
-    @points = @raw_points[0]
-    @comment_count = @raw_comments.length
-    post = Post.new(@title, @url, @points)
-
- # @raw_comments.each { |comment| Post.create(comment) }
+   
+          # @all_ <<  @comments  
 
 
-    puts "This post, with a title of: " + "#{@title}".colorize(:blue)  + ", has " + "#{@comment_count} comments".colorize(:green) + ", and " + "#{@points}.".colorize(:red)
+          @comments.each {|comment| post.comment_storage <<  Comment.new(comment).contents}
 
 
-# @title = @raw_title[0]
-# @url = @command_line_input.to_s
-# @points = @raw_points[0]
-# # @comment_count = @raw_comments.length
+         #  post.add_comment("blah")
+         #  post.add_comment("blah blah")
 
 
-# puts "Title: " + "#{@title},"  + " has #{@comment_count} comments, and #{@points}."
+         chair = Comment.new("this is a object")
+         object1 = Comment.new("object")
 
+         post.add_comment(chair)
 
-# puts @raw_comments
-# puts post.url
+        post.comments
